@@ -869,13 +869,15 @@ This will become a hard error in the future.''')
         return []
 
     @permittedKwargs({'interface_prefix', 'namespace', 'object_manager', 'build_by_default',
-                      'annotations', 'docbook', 'install', 'install_header', 'sources'})
+                      'annotations', 'docbook', 'install', 'install_header', 'sources',
+                      'depend_files'})
     def gdbus_codegen(self, state, args, kwargs):
         if len(args) not in (1, 2):
             raise MesonException('Gdbus_codegen takes at most two arguments, name and xml file.')
         namebase = args[0]
-        xml_files = [args[1:]]
         target_name = namebase + '-gdbus'
+        xml_files = [args[1:]]
+        depend_files = []
         cmd = [find_program('gdbus-codegen', target_name)]
         if 'interface_prefix' in kwargs:
             cmd += ['--interface-prefix', kwargs.pop('interface_prefix')]
@@ -885,6 +887,8 @@ This will become a hard error in the future.''')
             cmd += ['--c-generate-object-manager']
         if 'sources' in kwargs:
             xml_files += mesonlib.listify(kwargs.pop('sources'))
+        if 'depend_files' in kwargs:
+            depend_files = kwargs.pop('depend_files')
         build_by_default = kwargs.get('build_by_default', False)
 
         # Annotations are a bit ugly in that they are a list of lists of strings...
@@ -909,7 +913,8 @@ This will become a hard error in the future.''')
             custom_kwargs = {'input': xml_files,
                              'output': output,
                              'command': cmd + ['--body', '--output', '@OUTDIR@/' + output, '@INPUT@'],
-                             'build_by_default': build_by_default
+                             'build_by_default': build_by_default,
+                             'depend_files': depend_files,
                              }
             targets.append(build.CustomTarget(output, state.subdir, state.subproject, custom_kwargs))
 
@@ -919,7 +924,8 @@ This will become a hard error in the future.''')
                              'command': cmd + ['--header', '--output', '@OUTDIR@/' + output, '@INPUT@'],
                              'build_by_default': build_by_default,
                              'install': install_header,
-                             'install_dir': install_dir
+                             'install_dir': install_dir,
+                             'depend_files': depend_files,
                              }
             targets.append(build.CustomTarget(output, state.subdir, state.subproject, custom_kwargs))
 
@@ -934,7 +940,8 @@ This will become a hard error in the future.''')
                 custom_kwargs = {'input': xml_files,
                                  'output': output,
                                  'command': docbook_cmd,
-                                 'build_by_default': build_by_default
+                                 'build_by_default': build_by_default,
+                                 'depend_files': depend_files,
                                  }
                 targets.append(build.CustomTarget(output, state.subdir, state.subproject, custom_kwargs))
 
@@ -957,7 +964,8 @@ This will become a hard error in the future.''')
             custom_kwargs = {'input': xml_files,
                              'output': outputs,
                              'command': cmd,
-                             'build_by_default': build_by_default
+                             'build_by_default': build_by_default,
+                             'depend_files': depend_files,
                              }
             ct = build.CustomTarget(target_name, state.subdir, state.subproject, custom_kwargs)
             # Ensure that the same number (and order) of arguments are returned
