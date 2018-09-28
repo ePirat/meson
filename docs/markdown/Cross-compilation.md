@@ -123,7 +123,7 @@ c_link_args = ['-some_link_arg']
 ```
 
 In most cases you don't need the size and alignment settings, Meson
-will detect all these by compiling and running some sample
+will detect all these by compiling some sample
 programs. If your build requires some piece of data that is not listed
 here, Meson will stop and write an error message describing how to fix
 the issue. If you need extra compiler arguments to be used during
