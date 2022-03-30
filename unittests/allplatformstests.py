@@ -1554,8 +1554,7 @@ class AllPlatformTests(BasePlatformTests):
         env = get_fake_env('', self.builddir, self.prefix)
         cc = detect_c_compiler(env, MachineChoice.HOST)
         # Detect machine info
-        env.machines.build = mesonbuild.environment.detect_machine_info({'c':cc})
-        env.machines.default_missing()
+        env.machines.host = mesonbuild.environment.detect_machine_info({'c':cc})
         return (env, cc)
 
     def test_underscore_prefix_detection_list(self) -> None:
