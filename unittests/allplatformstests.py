@@ -1553,12 +1553,15 @@ class AllPlatformTests(BasePlatformTests):
         '''
         env = get_fake_env('', self.builddir)
         cc = detect_c_compiler(env, MachineChoice.HOST)
+        env.machines.host = mesonbuild.environment.detect_machine_info({'c':cc})
+        print(env.machines.host.cpu_family)
         expected_uscore = cc._symbols_have_underscore_prefix_searchbin(env)
         list_uscore = cc._symbols_have_underscore_prefix_list(env)
         if list_uscore is not None:
             self.assertEqual(list_uscore, expected_uscore)
         else:
             raise SkipTest('No match in underscore prefix list for this platform.')
+        raise Foo
 
     def test_underscore_prefix_detection_define(self) -> None:
         '''
