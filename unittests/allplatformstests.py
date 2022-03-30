@@ -1553,7 +1553,7 @@ class AllPlatformTests(BasePlatformTests):
         '''
         env = get_fake_env('', self.builddir)
         cc = detect_c_compiler(env, MachineChoice.HOST)
-        env.machines.host = mesonbuild.environment.detect_machine_info() # {'c':cc}
+        env.machines.host = mesonbuild.environment.detect_machine_info({}) # {'c':cc}
         print(env.machines.host.cpu_family)
         expected_uscore = cc._symbols_have_underscore_prefix_searchbin(env)
         list_uscore = cc._symbols_have_underscore_prefix_list(env)
