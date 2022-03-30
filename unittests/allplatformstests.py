@@ -1563,22 +1563,19 @@ class AllPlatformTests(BasePlatformTests):
         against what was detected in the binary.
         '''
         env, cc = self.get_convincing_fake_env_and_cc()
-        print(env.machines.host.cpu_family)
         expected_uscore = cc._symbols_have_underscore_prefix_searchbin(env)
         list_uscore = cc._symbols_have_underscore_prefix_list(env)
         if list_uscore is not None:
             self.assertEqual(list_uscore, expected_uscore)
         else:
             raise SkipTest('No match in underscore prefix list for this platform.')
-        raise Foo
 
     def test_underscore_prefix_detection_define(self) -> None:
         '''
         Test the underscore detection based on compiler-defined preprocessor macro
         against what was detected in the binary.
         '''
-        env = get_fake_env('', self.builddir)
-        cc = detect_c_compiler(env, MachineChoice.HOST)
+        env, cc = env, cc = self.get_convincing_fake_env_and_cc()
         expected_uscore = cc._symbols_have_underscore_prefix_searchbin(env)
         define_uscore = cc._symbols_have_underscore_prefix_define(env)
         if define_uscore is not None:
