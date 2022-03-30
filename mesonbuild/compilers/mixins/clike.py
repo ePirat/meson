@@ -976,6 +976,7 @@ class CLikeCompiler(Compiler):
             return True
         # Windows uses the underscore prefix on x86 (32bit) only
         if m.is_windows() or m.is_cygwin():
+            print('Underscore prefix detected Windows/Cygwin (' + m.cpu_family + ')')
             return m.cpu_family == 'x86'
         return None
 
