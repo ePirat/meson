@@ -1546,14 +1546,24 @@ class AllPlatformTests(BasePlatformTests):
             self.build()
             self.run_tests()
 
+    def get_convincing_fake_env_and_cc(self) -> None:
+        '''
+        Return a fake env and C compiler with the fake env
+        machine info properly detected using that compiler.
+        '''
+        env = get_fake_env('', self.builddir, self.prefix)
+        cc = detect_c_compiler(env, MachineChoice.HOST)
+        # Detect machine info
+        env.machines.build = mesonbuild.environment.detect_machine_info({'c':cc})
+        env.machines.default_missing()
+        return (env, cc)
+
     def test_underscore_prefix_detection_list(self) -> None:
         '''
         Test the underscore detection hardcoded lookup list
         against what was detected in the binary.
         '''
-        env = get_fake_env('', self.builddir)
-        cc = detect_c_compiler(env, MachineChoice.HOST)
-        env.machines.host = mesonbuild.environment.detect_machine_info({}) # {'c':cc}
+        env, cc = self.get_convincing_fake_env_and_cc()
         print(env.machines.host.cpu_family)
         expected_uscore = cc._symbols_have_underscore_prefix_searchbin(env)
         list_uscore = cc._symbols_have_underscore_prefix_list(env)
