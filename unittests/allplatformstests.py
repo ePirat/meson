@@ -1546,6 +1546,34 @@ class AllPlatformTests(BasePlatformTests):
             self.build()
             self.run_tests()
 
+    def test_underscore_prefix_detection_list(self) -> None:
+        '''
+        Test the underscore detection hardcoded lookup list
+        against what was detected in the binary.
+        '''
+        env = get_fake_env('', self.builddir)
+        cc = detect_c_compiler(env, MachineChoice.HOST)
+        expected_uscore = cc._symbols_have_underscore_prefix_searchbin(env)
+        list_uscore = cc._symbols_have_underscore_prefix_list(env)
+        if list_uscore is not None:
+            self.assertEqual(list_uscore, expected_uscore)
+        else:
+            raise SkipTest('No match in underscore prefix list for this platform.')
+
+    def test_underscore_prefix_detection_define(self) -> None:
+        '''
+        Test the underscore detection based on compiler-defined preprocessor macro
+        against what was detected in the binary.
+        '''
+        env = get_fake_env('', self.builddir)
+        cc = detect_c_compiler(env, MachineChoice.HOST)
+        expected_uscore = cc._symbols_have_underscore_prefix_searchbin(env)
+        define_uscore = cc._symbols_have_underscore_prefix_define(env)
+        if define_uscore is not None:
+            self.assertEqual(define_uscore, expected_uscore)
+        else:
+            raise SkipTest('Did not find the underscore prefix define __USER_LABEL_PREFIX__')
+
     @skipIfNoPkgconfig
     def test_pkgconfig_static(self):
         '''
